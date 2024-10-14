@@ -4,19 +4,18 @@
 const int BUFFER_SIZE = 20;
 
 struct BufferNode {
-    char buffer[BUFFER_SIZE];
+    char buffer[BUFFER_SIZE + 1];  // +1 for null termination
     BufferNode* next;
 
     BufferNode() : next(nullptr) {
-        // Initialize buffer with null terminators
-        std::fill(buffer, buffer + BUFFER_SIZE, '\0');
+        std::fill(buffer, buffer + BUFFER_SIZE + 1, '\0'); // Fill with nulls
     }
 };
 
 int state = 0;
 
 void bufferReader(BufferNode* current, char lexime[], int &bi, int &li) {
-    while (current != nullptr && current->buffer[bi] != '\0') {
+    while (bi < BUFFER_SIZE && current->buffer[bi] != '\0') {
         char value = current->buffer[bi];
         switch (state) {
             case 0:
@@ -47,12 +46,6 @@ void bufferReader(BufferNode* current, char lexime[], int &bi, int &li) {
                 break;
         }
         bi++;
-
-        // Move to the next buffer node if the current buffer is done
-        if (bi >= BUFFER_SIZE) {
-            current = current->next;
-            bi = 0; // Reset buffer index for the next node
-        }
     }
 }
 
@@ -63,7 +56,7 @@ int main() {
         return 1;
     }
 
-    // Start of the buffer linked list
+    // Head of the buffer linked list
     BufferNode* head = new BufferNode();
     BufferNode* current = head;
 
@@ -71,23 +64,30 @@ int main() {
     int lexIndex = 0;
 
     while (!file.eof()) {
-        std::cout << "Buffer Called\n";
         
-        // Read into the current buffer node
+        
+        // Read from file into current buffer node
         file.read(current->buffer, BUFFER_SIZE);
         std::size_t bytesRead = file.gcount();
+        
+        // Null-terminate to avoid junk beyond valid content
+        current->buffer[bytesRead] = '\0';
+
+        // Process the current buffer
+        int buffIndex = 0;
+        bufferReader(current, lex, buffIndex, lexIndex);
 
         if (bytesRead == BUFFER_SIZE) {
-            // Create a new buffer node if the current one is full
+            // If we haven't reached the end of the file, create a new buffer node
+            std::cout << "newbuffer\n";
             BufferNode* newNode = new BufferNode();
             current->next = newNode;
             current = newNode;
         }
     }
 
-    // Process the entire linked list of buffers
-    int buffIndex = 0;
-    bufferReader(head, lex, buffIndex, lexIndex);
+    // Close the file
+    file.close();
 
     // Clean up the linked list
     current = head;
@@ -97,6 +97,5 @@ int main() {
         delete temp;
     }
 
-    file.close();
     return 0;
 }
