@@ -1,5 +1,4 @@
 #include "DoublyLinkedList.h"
-
 DoublyLinkedList::DoublyLinkedList() : head(nullptr), tail(nullptr) {}
 
 void DoublyLinkedList::insertBack(Prod *p)
