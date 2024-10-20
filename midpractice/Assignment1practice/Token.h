@@ -13,4 +13,4 @@ public:
     Token(const std::string t);
 };
 
-#endif // TOKEN_H
+#endif

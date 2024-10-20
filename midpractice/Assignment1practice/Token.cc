@@ -1,16 +1,3 @@
-#ifndef TOKEN_H
-#define TOKEN_H
+#include "Token.h"
 
-#include <string>
-
-class Token
-{
-public:
-    std::string t;
-    Token *next;
-    Token *prev;
-
-    Token(const std::string t);
-};
-
-#endif // TOKEN_H
+Token::Token(const std::string t) : t(t), next(nullptr), prev(nullptr) {}
