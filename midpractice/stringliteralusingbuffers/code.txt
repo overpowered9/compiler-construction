@@ -1,0 +1,4 @@
+"This is a string" 
+"This string contains an escaped quote: \"
+"Another string"
+"This is the end"
