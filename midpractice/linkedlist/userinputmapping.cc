@@ -61,6 +61,7 @@ int main() {
     
     cout << "Enter a sentence: ";
     getline(cin, sentence);
+    getline(cin,sentence);
     
     // Breaking sentence into words
     stringstream ss(sentence);
